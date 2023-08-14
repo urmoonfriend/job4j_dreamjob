@@ -9,6 +9,7 @@
       <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/checkstyle.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
@@ -44,11 +45,12 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/user/Documents/IdeaProjects/my/Новая папка/job4j_dreamjob",
+    "last_opened_file_path": "C:/Users/user/Documents/IdeaProjects/my/Новая папка/job4j_dreamjob/checkstyle.xml",
     "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0"
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "org.infernus.idea.checkstyle.CheckStyleConfigurable"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -64,7 +66,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1691984434935</updated>
-      <workItem from="1691984438299" duration="333000" />
+      <workItem from="1691984438299" duration="475000" />
     </task>
     <servers />
   </component>

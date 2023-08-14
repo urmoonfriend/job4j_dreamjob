@@ -1,1 +1,1 @@
-Web app with Spring MVC and Spring Boot
+# Web app using Spring MVC and Spring Boot

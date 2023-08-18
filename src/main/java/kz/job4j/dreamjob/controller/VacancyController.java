@@ -1,10 +1,13 @@
 package kz.job4j.dreamjob.controller;
 
+import kz.job4j.dreamjob.model.Vacancy;
 import kz.job4j.dreamjob.repository.MemoryVacancyRepository;
 import kz.job4j.dreamjob.repository.VacancyRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -19,9 +22,10 @@ public class VacancyController {
         return "vacancies/list";
     }
 
-    @GetMapping("/create")
-    public String getCreationPage() {
-        return "vacancies/create";
+    @PostMapping("/create")
+    public String getCreationPage(@ModelAttribute Vacancy vacancy) {
+        vacancyRepository.save(vacancy);
+        return "redirect:/vacancies";
     }
 
 }

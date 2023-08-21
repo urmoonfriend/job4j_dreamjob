@@ -1,7 +1,6 @@
 package kz.job4j.dreamjob.repository;
 
 import kz.job4j.dreamjob.model.Candidate;
-import kz.job4j.dreamjob.model.Vacancy;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;

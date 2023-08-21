@@ -19,8 +19,13 @@ public class VacancyController {
         return "vacancies/list";
     }
 
+    @GetMapping("/create")
+    public String getCreationPage() {
+        return "vacancies/create";
+    }
+
     @PostMapping("/create")
-    public String getCreationPage(@ModelAttribute Vacancy vacancy) {
+    public String create(@ModelAttribute Vacancy vacancy) {
         vacancyRepository.save(vacancy);
         return "redirect:/vacancies";
     }

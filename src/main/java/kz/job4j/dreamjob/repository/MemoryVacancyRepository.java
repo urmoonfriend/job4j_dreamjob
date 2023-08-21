@@ -1,6 +1,7 @@
 package kz.job4j.dreamjob.repository;
 
 import kz.job4j.dreamjob.model.Vacancy;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Repository
 public class MemoryVacancyRepository implements VacancyRepository {
     
     private static final MemoryVacancyRepository INSTANCE = new MemoryVacancyRepository();    

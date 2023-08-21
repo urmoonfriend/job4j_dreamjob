@@ -11,8 +11,6 @@ import java.util.Optional;
 
 @Repository
 public class MemoryVacancyRepository implements VacancyRepository {
-    
-    private static final MemoryVacancyRepository INSTANCE = new MemoryVacancyRepository();    
 
     private int nextId = 1;
 
@@ -25,10 +23,6 @@ public class MemoryVacancyRepository implements VacancyRepository {
         save(new Vacancy(3, "Middle Java Developer", "need to know Concurrency, Deploy, Web, DB, Frameworks, work experience more than 2 years", LocalDateTime.now()));
         save(new Vacancy(4, "Middle+ Java Developer", "need to know build Architecture, big experience", LocalDateTime.now()));
         save(new Vacancy(5, "Senior Java Developer", "need to solve big problems, build Architecture or application, task delegation, development team management", LocalDateTime.now()));
-    }
-
-    public static MemoryVacancyRepository getInstance() {
-        return INSTANCE;
     }
 
     @Override

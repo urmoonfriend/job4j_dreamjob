@@ -56,5 +56,4 @@ public class VacancyController {
         return "redirect:/vacancies";
     }
 
-
 }

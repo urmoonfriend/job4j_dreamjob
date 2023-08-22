@@ -2,12 +2,14 @@ package kz.job4j.dreamjob.service;
 
 import kz.job4j.dreamjob.model.Candidate;
 import kz.job4j.dreamjob.repository.CandidateRepository;
+import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Optional;
 
 @Service
+@ThreadSafe
 public class SimpleCandidateService implements CandidateService {
     private final CandidateRepository candidateRepository;
 

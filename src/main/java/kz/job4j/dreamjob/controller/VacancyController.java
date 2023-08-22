@@ -2,15 +2,22 @@ package kz.job4j.dreamjob.controller;
 
 import kz.job4j.dreamjob.model.Vacancy;
 import kz.job4j.dreamjob.service.VacancyService;
+import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Controller
+@ThreadSafe
 @RequestMapping("/vacancies")
 public class VacancyController {
 
     private final VacancyService vacancyService;
+    private static final String REDIRECT_VACANCIES = "redirect:/vacancies";
+    private static final String NOT_FOUND_PAGE = "errors/404";
+    private static final String NOT_FOUND_MESSAGE = "Вакансия с указанным идентификатором не найдена";
+    private static final String MESSAGE_ATTRIBUTE = "message";
 
     public VacancyController(VacancyService vacancyService) {
         this.vacancyService = vacancyService;
@@ -30,39 +37,43 @@ public class VacancyController {
     @PostMapping("/create")
     public String create(@ModelAttribute Vacancy vacancy) {
         vacancyService.save(vacancy);
-        return "redirect:/vacancies";
+        return REDIRECT_VACANCIES;
     }
 
     @GetMapping("/{id}")
     public String getById(Model model, @PathVariable int id) {
-        var vacancyOptional = vacancyService.findById(id);
-        if (vacancyOptional.isEmpty()) {
-            model.addAttribute("message", "Вакансия с указанным идентификатором не найдена");
-            return "errors/404";
-        }
-        model.addAttribute("vacancy", vacancyOptional.get());
-        return "vacancies/one";
+        AtomicReference<String> page = new AtomicReference<>(NOT_FOUND_PAGE);
+        vacancyService.findById(id).ifPresentOrElse(
+                vacancy -> {
+                    page.set("vacancies/one");
+                    model.addAttribute("vacancy", vacancy);
+                }, () -> model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE)
+        );
+        return page.get();
     }
 
     @PostMapping("/update")
     public String update(@ModelAttribute Vacancy vacancy, Model model) {
-        var isUpdated = vacancyService.update(vacancy);
-        if (!isUpdated) {
-            model.addAttribute("message", "Вакансия с указанным идентификатором не найдена");
-            return "errors/404";
-        }
-        return "redirect:/vacancies";
+        AtomicReference<String> page = new AtomicReference<>(NOT_FOUND_PAGE);
+        vacancyService.findById(vacancy.getId()).ifPresentOrElse(
+                vacancyToUpdate -> {
+                    vacancyService.update(vacancy);
+                    page.set(REDIRECT_VACANCIES);
+                }, () -> model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE)
+        );
+        return page.get();
     }
 
     @GetMapping("/delete/{id}")
     public String delete(Model model, @PathVariable int id) {
-        var vacancyToDelete = vacancyService.findById(id);
-        if (vacancyToDelete.isEmpty()) {
-            model.addAttribute("message", "Вакансия с указанным идентификатором не найдена");
-            return "errors/404";
-        }
-        vacancyService.deleteById(id);
-        return "redirect:/vacancies";
+        AtomicReference<String> page = new AtomicReference<>(NOT_FOUND_PAGE);
+        vacancyService.findById(id).ifPresentOrElse(
+                vacancyToDelete -> {
+                    vacancyService.deleteById(id);
+                    page.set(REDIRECT_VACANCIES);
+                }, () -> model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE)
+        );
+        return page.get();
     }
 
 }

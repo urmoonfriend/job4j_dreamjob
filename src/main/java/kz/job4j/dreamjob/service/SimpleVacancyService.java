@@ -2,12 +2,14 @@ package kz.job4j.dreamjob.service;
 
 import kz.job4j.dreamjob.model.Vacancy;
 import kz.job4j.dreamjob.repository.VacancyRepository;
+import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Optional;
 
 @Service
+@ThreadSafe
 public class SimpleVacancyService implements VacancyService {
     private final VacancyRepository vacancyRepository;
 

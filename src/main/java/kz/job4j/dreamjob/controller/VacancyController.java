@@ -1,6 +1,7 @@
 package kz.job4j.dreamjob.controller;
 
 import kz.job4j.dreamjob.model.Vacancy;
+import kz.job4j.dreamjob.service.CityService;
 import kz.job4j.dreamjob.service.VacancyService;
 import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Controller;
@@ -12,15 +13,16 @@ import java.util.concurrent.atomic.AtomicReference;
 @ThreadSafe
 @RequestMapping("/vacancies")
 public class VacancyController {
-
     private final VacancyService vacancyService;
+    private final CityService cityService;
     private static final String REDIRECT_VACANCIES = "redirect:/vacancies";
     private static final String NOT_FOUND_PAGE = "errors/404";
     private static final String NOT_FOUND_MESSAGE = "Вакансия с указанным идентификатором не найдена";
     private static final String MESSAGE_ATTRIBUTE = "message";
 
-    public VacancyController(VacancyService vacancyService) {
+    public VacancyController(VacancyService vacancyService, CityService cityService) {
         this.vacancyService = vacancyService;
+        this.cityService = cityService;
     }
 
     @GetMapping
@@ -30,7 +32,8 @@ public class VacancyController {
     }
 
     @GetMapping("/create")
-    public String getCreationPage() {
+    public String getCreationPage(Model model) {
+        model.addAttribute("cities", cityService.findAll());
         return "vacancies/create";
     }
 
@@ -47,6 +50,7 @@ public class VacancyController {
                 vacancy -> {
                     page.set("vacancies/one");
                     model.addAttribute("vacancy", vacancy);
+                    model.addAttribute("cities", cityService.findAll());
                 }, () -> model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE)
         );
         return page.get();

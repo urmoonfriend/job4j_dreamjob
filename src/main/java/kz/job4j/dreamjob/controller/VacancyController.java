@@ -7,7 +7,6 @@ import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Controller
 @ThreadSafe
@@ -45,39 +44,35 @@ public class VacancyController {
 
     @GetMapping("/{id}")
     public String getById(Model model, @PathVariable int id) {
-        AtomicReference<String> page = new AtomicReference<>(NOT_FOUND_PAGE);
-        vacancyService.findById(id).ifPresentOrElse(
-                vacancy -> {
-                    page.set("vacancies/one");
-                    model.addAttribute("vacancy", vacancy);
-                    model.addAttribute("cities", cityService.findAll());
-                }, () -> model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE)
-        );
-        return page.get();
+        var vacancyOptional = vacancyService.findById(id);
+        if (vacancyOptional.isEmpty()) {
+            model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE);
+            return NOT_FOUND_PAGE;
+        }
+        model.addAttribute("vacancy", vacancyOptional.get());
+        model.addAttribute("cities", cityService.findAll());
+        return "vacancies/one";
     }
 
     @PostMapping("/update")
     public String update(@ModelAttribute Vacancy vacancy, Model model) {
-        AtomicReference<String> page = new AtomicReference<>(NOT_FOUND_PAGE);
-        vacancyService.findById(vacancy.getId()).ifPresentOrElse(
-                vacancyToUpdate -> {
-                    vacancyService.update(vacancy);
-                    page.set(REDIRECT_VACANCIES);
-                }, () -> model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE)
-        );
-        return page.get();
+        var isUpdated = vacancyService.update(vacancy);
+        if (!isUpdated) {
+            model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE);
+            return NOT_FOUND_PAGE;
+        }
+        return REDIRECT_VACANCIES;
     }
 
     @GetMapping("/delete/{id}")
     public String delete(Model model, @PathVariable int id) {
-        AtomicReference<String> page = new AtomicReference<>(NOT_FOUND_PAGE);
-        vacancyService.findById(id).ifPresentOrElse(
-                vacancyToDelete -> {
-                    vacancyService.deleteById(id);
-                    page.set(REDIRECT_VACANCIES);
-                }, () -> model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE)
-        );
-        return page.get();
+        var vacancyToDelete = vacancyService.findById(id);
+        if (vacancyToDelete.isEmpty()) {
+            model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE);
+            return NOT_FOUND_PAGE;
+        }
+        vacancyService.deleteById(id);
+        return REDIRECT_VACANCIES;
     }
 
 }

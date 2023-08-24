@@ -1,5 +1,6 @@
 package kz.job4j.dreamjob.controller;
 
+import kz.job4j.dreamjob.model.FileDto;
 import kz.job4j.dreamjob.model.Vacancy;
 import kz.job4j.dreamjob.service.CityService;
 import kz.job4j.dreamjob.service.VacancyService;
@@ -7,6 +8,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @ThreadSafe
@@ -37,9 +39,14 @@ public class VacancyController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Vacancy vacancy) {
-        vacancyService.save(vacancy);
-        return REDIRECT_VACANCIES;
+    public String create(@ModelAttribute Vacancy vacancy, @RequestParam MultipartFile file, Model model) {
+        try {
+            vacancyService.save(vacancy, new FileDto(file.getOriginalFilename(), file.getBytes()));
+            return REDIRECT_VACANCIES;
+        } catch (Exception exception) {
+            model.addAttribute(MESSAGE_ATTRIBUTE, exception.getMessage());
+            return NOT_FOUND_PAGE;
+        }
     }
 
     @GetMapping("/{id}")
@@ -55,13 +62,18 @@ public class VacancyController {
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Vacancy vacancy, Model model) {
-        var isUpdated = vacancyService.update(vacancy);
-        if (!isUpdated) {
-            model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE);
+    public String update(@ModelAttribute Vacancy vacancy, @RequestParam MultipartFile file, Model model) {
+        try {
+            var isUpdated = vacancyService.update(vacancy, new FileDto(file.getOriginalFilename(), file.getBytes()));
+            if (!isUpdated) {
+                model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE);
+                return NOT_FOUND_PAGE;
+            }
+            return REDIRECT_VACANCIES;
+        } catch (Exception exception) {
+            model.addAttribute(MESSAGE_ATTRIBUTE, exception.getMessage());
             return NOT_FOUND_PAGE;
         }
-        return REDIRECT_VACANCIES;
     }
 
     @GetMapping("/delete/{id}")

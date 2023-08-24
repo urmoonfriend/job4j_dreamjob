@@ -1,11 +1,13 @@
 package kz.job4j.dreamjob.controller;
 
 import kz.job4j.dreamjob.model.Candidate;
+import kz.job4j.dreamjob.model.FileDto;
 import kz.job4j.dreamjob.service.CandidateService;
 import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @ThreadSafe
@@ -35,9 +37,14 @@ public class CandidateController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Candidate candidate) {
-        candidateService.save(candidate);
-        return REDIRECT_CANDIDATES;
+    public String create(@ModelAttribute Candidate candidate, @RequestParam MultipartFile file, Model model) {
+        try {
+            candidateService.save(candidate, new FileDto(file.getOriginalFilename(), file.getBytes()));
+            return REDIRECT_CANDIDATES;
+        } catch (Exception exception) {
+            model.addAttribute(MESSAGE_ATTRIBUTE, exception.getMessage());
+            return NOT_FOUND_PAGE;
+        }
     }
 
     @GetMapping("/{id}")
@@ -52,13 +59,18 @@ public class CandidateController {
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Candidate candidate, Model model) {
-        var isUpdated = candidateService.update(candidate);
-        if (!isUpdated) {
-            model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE);
+    public String update(@ModelAttribute Candidate candidate, @RequestParam MultipartFile file, Model model) {
+        try {
+            var isUpdated = candidateService.update(candidate, new FileDto(file.getOriginalFilename(), file.getBytes()));
+            if (!isUpdated) {
+                model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE);
+                return NOT_FOUND_PAGE;
+            }
+            return REDIRECT_CANDIDATES;
+        } catch (Exception exception) {
+            model.addAttribute(MESSAGE_ATTRIBUTE, exception.getMessage());
             return NOT_FOUND_PAGE;
         }
-        return REDIRECT_CANDIDATES;
     }
 
     @GetMapping("/delete/{id}")

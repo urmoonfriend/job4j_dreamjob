@@ -18,12 +18,12 @@ public class MemoryVacancyRepository implements VacancyRepository {
     private final ConcurrentMap<Integer, Vacancy> vacancies = new ConcurrentHashMap<>();
 
     private MemoryVacancyRepository() {
-        save(new Vacancy(0, "Intern Java Developer", "need to know Java Core", LocalDateTime.now(), true, 0));
-        save(new Vacancy(1, "Junior Java Developer", "need to know Strategy Patterns, simple SQL", LocalDateTime.now(), true, 0));
-        save(new Vacancy(2, "Junior+ Java Developer", "need to know Spring Framework, work with DB", LocalDateTime.now(), true, 0));
-        save(new Vacancy(3, "Middle Java Developer", "need to know Concurrency, Deploy, Web, DB, Frameworks, work experience more than 2 years", LocalDateTime.now(), true, 0));
-        save(new Vacancy(4, "Middle+ Java Developer", "need to know build Architecture, big experience", LocalDateTime.now(), true, 0));
-        save(new Vacancy(5, "Senior Java Developer", "need to solve big problems, build Architecture or application, task delegation, development team management", LocalDateTime.now(), true, 0));
+        save(new Vacancy(0, "Intern Java Developer", "need to know Java Core", LocalDateTime.now(), true, 1, 0));
+        save(new Vacancy(1, "Junior Java Developer", "need to know Strategy Patterns, simple SQL", LocalDateTime.now(), true, 2, 0));
+        save(new Vacancy(2, "Junior+ Java Developer", "need to know Spring Framework, work with DB", LocalDateTime.now(), true, 1, 0));
+        save(new Vacancy(3, "Middle Java Developer", "need to know Concurrency, Deploy, Web, DB, Frameworks, work experience more than 2 years", LocalDateTime.now(), true, 3, 0));
+        save(new Vacancy(4, "Middle+ Java Developer", "need to know build Architecture, big experience", LocalDateTime.now(), true, 1, 0));
+        save(new Vacancy(5, "Senior Java Developer", "need to solve big problems, build Architecture or application, task delegation, development team management", LocalDateTime.now(), true, 1, 0));
     }
 
     @Override
@@ -47,7 +47,8 @@ public class MemoryVacancyRepository implements VacancyRepository {
                                 vacancy.getDescription(),
                                 oldVacancy.getCreationDate(),
                                 vacancy.getVisible(),
-                                vacancy.getCityId())) != null;
+                                vacancy.getCityId(),
+                                vacancy.getFileId())) != null;
     }
 
     @Override

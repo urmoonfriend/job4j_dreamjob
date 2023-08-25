@@ -75,6 +75,7 @@ public class VacancyController {
             return NOT_FOUND_PAGE;
         }
     }
+
     @GetMapping("/delete/{id}")
     public String delete(Model model, @PathVariable int id) {
         var vacancyToDelete = vacancyService.findById(id);

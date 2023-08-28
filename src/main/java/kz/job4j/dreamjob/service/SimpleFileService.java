@@ -3,6 +3,7 @@ package kz.job4j.dreamjob.service;
 import kz.job4j.dreamjob.model.File;
 import kz.job4j.dreamjob.model.FileDto;
 import kz.job4j.dreamjob.repository.FileRepository;
+import net.jcip.annotations.ThreadSafe;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@ThreadSafe
 public class SimpleFileService implements FileService {
 
     private final FileRepository fileRepository;

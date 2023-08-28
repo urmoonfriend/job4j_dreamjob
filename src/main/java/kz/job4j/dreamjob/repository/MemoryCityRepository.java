@@ -3,9 +3,12 @@ package kz.job4j.dreamjob.repository;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Repository;
 import kz.job4j.dreamjob.model.City;
 @Repository
+@ThreadSafe
 public class MemoryCityRepository implements CityRepository {
 
     private final Map<Integer, City> cities = new HashMap<>() {

@@ -2,12 +2,14 @@ package kz.job4j.dreamjob.repository;
 
 
 import kz.job4j.dreamjob.model.File;
+import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Repository;
 import org.sql2o.Sql2o;
 
 import java.util.Optional;
 
 @Repository
+@ThreadSafe
 public class Sql2oFileRepository implements FileRepository {
 
     private final Sql2o sql2o;

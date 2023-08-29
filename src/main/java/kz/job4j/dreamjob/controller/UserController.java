@@ -15,9 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
-    private static final String REDIRECT_USERS = "index";
+    private static final String REDIRECT_VACANCIES = "redirect:/vacancies";
     private static final String MESSAGE_ATTRIBUTE = "message";
     private static final String NOT_FOUND_PAGE = "errors/404";
+    private static final String NOT_FOUND_MESSAGE = "Пользователь с такой почтой уже существует";
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -29,14 +30,13 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String register(@ModelAttribute User user, Model model) {
-        try {
-            userService.save(user);
-            return REDIRECT_USERS;
-        } catch (Exception exception) {
-            model.addAttribute(MESSAGE_ATTRIBUTE, exception.getMessage());
+    public String register(Model model, @ModelAttribute User user) {
+        var savedUser = userService.save(user);
+        if (savedUser.isEmpty()) {
+            model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE);
             return NOT_FOUND_PAGE;
         }
+        return REDIRECT_VACANCIES;
     }
 
 }

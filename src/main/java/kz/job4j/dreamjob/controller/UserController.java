@@ -17,11 +17,31 @@ public class UserController {
     private final UserService userService;
     private static final String REDIRECT_VACANCIES = "redirect:/vacancies";
     private static final String MESSAGE_ATTRIBUTE = "message";
+
+    private static final String ERROR_ATTRIBUTE = "error";
+
+    private static final String INCORRECT_AUTHENTICATION_MESSAGE = "Почта или пароль введены неверно";
     private static final String NOT_FOUND_PAGE = "errors/404";
     private static final String NOT_FOUND_MESSAGE = "Пользователь с такой почтой уже существует";
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("/login")
+    public String getLoginPage() {
+        return "users/login";
+    }
+
+    @PostMapping("login")
+    public String loginUser(@ModelAttribute User user, Model model) {
+        var userOptional =
+                userService.findByEmailAndPassword(user.getEmail(), user.getPassword());
+        if (userOptional.isEmpty()) {
+            model.addAttribute(ERROR_ATTRIBUTE, INCORRECT_AUTHENTICATION_MESSAGE);
+            return "users/login";
+        }
+        return "redirect:/vacancies";
     }
 
     @GetMapping("/register")

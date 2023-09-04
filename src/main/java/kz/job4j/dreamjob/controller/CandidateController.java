@@ -2,12 +2,15 @@ package kz.job4j.dreamjob.controller;
 
 import kz.job4j.dreamjob.model.Candidate;
 import kz.job4j.dreamjob.model.FileDto;
+import kz.job4j.dreamjob.model.User;
 import kz.job4j.dreamjob.service.CandidateService;
 import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpSession;
 
 @Controller
 @ThreadSafe
@@ -20,19 +23,32 @@ public class CandidateController {
     private static final String NOT_FOUND_MESSAGE = "Резюме с указанным идентификатором не найдено";
     private static final String MESSAGE_ATTRIBUTE = "message";
     private static final String CANDIDATE_ATTRIBUTE = "candidate";
+    private static final String GUEST = "Guest";
 
     public CandidateController(CandidateService candidateService) {
         this.candidateService = candidateService;
     }
 
     @GetMapping
-    public String getAll(Model model) {
+    public String getAll(Model model, HttpSession session) {
+        var user = (User) session.getAttribute("user");
+        if (user == null) {
+            user = new User();
+            user.setName(GUEST);
+        }
+        model.addAttribute("user", user);
         model.addAttribute("candidates", candidateService.findAll());
         return "candidates/list";
     }
 
     @GetMapping("/create")
-    public String getCreationPage() {
+    public String getCreationPage(Model model, HttpSession session) {
+        var user = (User) session.getAttribute("user");
+        if (user == null) {
+            user = new User();
+            user.setName(GUEST);
+        }
+        model.addAttribute("user", user);
         return "candidates/create";
     }
 
@@ -48,7 +64,13 @@ public class CandidateController {
     }
 
     @GetMapping("/{id}")
-    public String getById(Model model, @PathVariable int id) {
+    public String getById(Model model, @PathVariable int id, HttpSession session) {
+        var user = (User) session.getAttribute("user");
+        if (user == null) {
+            user = new User();
+            user.setName(GUEST);
+        }
+        model.addAttribute("user", user);
         var candidateOptional = candidateService.findById(id);
         if (candidateOptional.isEmpty()) {
             model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE);
@@ -74,7 +96,13 @@ public class CandidateController {
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(Model model, @PathVariable int id) {
+    public String delete(Model model, @PathVariable int id, HttpSession session) {
+        var user = (User) session.getAttribute("user");
+        if (user == null) {
+            user = new User();
+            user.setName(GUEST);
+        }
+        model.addAttribute("user", user);
         var candidateToDelete = candidateService.findById(id);
         if (candidateToDelete.isEmpty()) {
             model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE);

@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 @Controller
 @ThreadSafe
 @RequestMapping("/users")
@@ -23,40 +26,64 @@ public class UserController {
     private static final String INCORRECT_AUTHENTICATION_MESSAGE = "Почта или пароль введены неверно";
     private static final String NOT_FOUND_PAGE = "errors/404";
     private static final String NOT_FOUND_MESSAGE = "Пользователь с такой почтой уже существует";
+    private static final String GUEST = "Guest";
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping("/login")
-    public String getLoginPage() {
+    public String getLoginPage(Model model, HttpSession session) {
+        var user = (User) session.getAttribute("user");
+        if (user == null) {
+            user = new User();
+            user.setName(GUEST);
+        }
+        model.addAttribute("user", user);
         return "users/login";
     }
 
     @PostMapping("login")
-    public String loginUser(@ModelAttribute User user, Model model) {
+    public String loginUser(@ModelAttribute User user, Model model, HttpServletRequest request) {
         var userOptional =
                 userService.findByEmailAndPassword(user.getEmail(), user.getPassword());
         if (userOptional.isEmpty()) {
             model.addAttribute(ERROR_ATTRIBUTE, INCORRECT_AUTHENTICATION_MESSAGE);
             return "users/login";
         }
-        return "redirect:/vacancies";
+        var session = request.getSession();
+        session.setAttribute("user", userOptional.get());
+        return REDIRECT_VACANCIES;
     }
 
     @GetMapping("/register")
-    public String getRegistationPage() {
+    public String getRegistationPage(Model model, HttpSession session) {
+        var user = (User) session.getAttribute("user");
+        if (user == null) {
+            user = new User();
+            user.setName(GUEST);
+        }
+        model.addAttribute("user", user);
         return "users/register";
     }
 
     @PostMapping("/register")
-    public String register(Model model, @ModelAttribute User user) {
+    public String register(Model model, @ModelAttribute User user, HttpServletRequest request) {
         var savedUser = userService.save(user);
         if (savedUser.isEmpty()) {
             model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE);
             return NOT_FOUND_PAGE;
         }
+        var session = request.getSession();
+        session.setAttribute("user", user);
+        model.addAttribute("user", user);
         return REDIRECT_VACANCIES;
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/users/login";
     }
 
 }

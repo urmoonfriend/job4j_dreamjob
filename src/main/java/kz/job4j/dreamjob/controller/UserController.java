@@ -33,13 +33,7 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public String getLoginPage(Model model, HttpSession session) {
-        var user = (User) session.getAttribute("user");
-        if (user == null) {
-            user = new User();
-            user.setName(GUEST);
-        }
-        model.addAttribute("user", user);
+    public String getLoginPage() {
         return "users/login";
     }
 
@@ -53,29 +47,22 @@ public class UserController {
         }
         var session = request.getSession();
         session.setAttribute("user", userOptional.get());
+        model.addAttribute("user", userOptional.get());
         return REDIRECT_VACANCIES;
     }
 
     @GetMapping("/register")
-    public String getRegistationPage(Model model, HttpSession session) {
-        var user = (User) session.getAttribute("user");
-        if (user == null) {
-            user = new User();
-            user.setName(GUEST);
-        }
-        model.addAttribute("user", user);
+    public String getRegistationPage() {
         return "users/register";
     }
 
     @PostMapping("/register")
-    public String register(Model model, @ModelAttribute User user, HttpServletRequest request) {
+    public String register(Model model, @ModelAttribute User user) {
         var savedUser = userService.save(user);
         if (savedUser.isEmpty()) {
             model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE);
             return NOT_FOUND_PAGE;
         }
-        var session = request.getSession();
-        session.setAttribute("user", user);
         model.addAttribute("user", user);
         return REDIRECT_VACANCIES;
     }

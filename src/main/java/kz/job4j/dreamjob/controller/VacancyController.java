@@ -1,7 +1,6 @@
 package kz.job4j.dreamjob.controller;
 
 import kz.job4j.dreamjob.model.FileDto;
-import kz.job4j.dreamjob.model.User;
 import kz.job4j.dreamjob.model.Vacancy;
 import kz.job4j.dreamjob.service.CityService;
 import kz.job4j.dreamjob.service.VacancyService;
@@ -10,9 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 @Controller
 @ThreadSafe
@@ -33,31 +29,19 @@ public class VacancyController {
     }
 
     @GetMapping
-    public String getAll(Model model, HttpSession session) {
-        var user = (User) session.getAttribute("user");
-        if (user == null) {
-            user = new User();
-            user.setName(GUEST);
-        }
-        model.addAttribute("user", user);
+    public String getAll(Model model) {
         model.addAttribute("vacancies", vacancyService.findAll());
         return "vacancies/list";
     }
 
     @GetMapping("/create")
-    public String getCreationPage(Model model, HttpSession session) {
-        var user = (User) session.getAttribute("user");
-        if (user == null) {
-            user = new User();
-            user.setName(GUEST);
-        }
-        model.addAttribute("user", user);
+    public String getCreationPage(Model model) {
         model.addAttribute("cities", cityService.findAll());
         return "vacancies/create";
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Vacancy vacancy, @RequestParam MultipartFile file, Model model, HttpServletRequest request) {
+    public String create(@ModelAttribute Vacancy vacancy, @RequestParam MultipartFile file, Model model) {
         try {
             vacancyService.save(vacancy, new FileDto(file.getOriginalFilename(), file.getBytes()));
             return REDIRECT_VACANCIES;
@@ -68,13 +52,7 @@ public class VacancyController {
     }
 
     @GetMapping("/{id}")
-    public String getById(Model model, @PathVariable int id, HttpSession session) {
-        var user = (User) session.getAttribute("user");
-        if (user == null) {
-            user = new User();
-            user.setName(GUEST);
-        }
-        model.addAttribute("user", user);
+    public String getById(Model model, @PathVariable int id) {
         var vacancyOptional = vacancyService.findById(id);
         if (vacancyOptional.isEmpty()) {
             model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE);
@@ -101,13 +79,7 @@ public class VacancyController {
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(Model model, @PathVariable int id, HttpSession session) {
-        var user = (User) session.getAttribute("user");
-        if (user == null) {
-            user = new User();
-            user.setName(GUEST);
-        }
-        model.addAttribute("user", user);
+    public String delete(Model model, @PathVariable int id) {
         var vacancyToDelete = vacancyService.findById(id);
         if (vacancyToDelete.isEmpty()) {
             model.addAttribute(MESSAGE_ATTRIBUTE, NOT_FOUND_MESSAGE);

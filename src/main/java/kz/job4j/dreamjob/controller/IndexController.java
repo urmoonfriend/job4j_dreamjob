@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 @ThreadSafe
 public class IndexController {
-    private static final String GUEST = "Guest";
-
     @GetMapping({"/", "/index"})
     public String getIndex() {
         return "index";

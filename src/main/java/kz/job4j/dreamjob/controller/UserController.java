@@ -26,7 +26,6 @@ public class UserController {
     private static final String INCORRECT_AUTHENTICATION_MESSAGE = "Почта или пароль введены неверно";
     private static final String NOT_FOUND_PAGE = "errors/404";
     private static final String NOT_FOUND_MESSAGE = "Пользователь с такой почтой уже существует";
-    private static final String GUEST = "Guest";
 
     public UserController(UserService userService) {
         this.userService = userService;
